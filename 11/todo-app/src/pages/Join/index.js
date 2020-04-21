@@ -4,15 +4,23 @@ import "./test";
 
 const Join = () => {
     const [id, setId] = useState("");
+    const [idChecked, setIdChecked] = useState(false);
+    const [idDuplicateError, setIdDuplicateError] = useState("");
     const [password, setPassword] = useState("");
     const [checkPassword, setCheckPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [passwordValidateError, setPasswordValidateError] = useState("");
     const [intro, setintro] = useState("");
     const [gender, setGender] = useState("man");
     const [birthday, setBirthday] = useState({
         year: "",
         month: "",
         day: "",
+    });
+    const [hobby, setHobby] = useState({
+        연애: true,
+        게임: false,
+        영화보기: false,
     });
 
     const makeYear = (startYear) => {
@@ -32,27 +40,52 @@ const Join = () => {
         return array;
     };
 
-    const makeDay = (e) => {
-        // const array = [];
-        // let month = 0;
-        // switch (e.target.value) {
-        //     case 1:
-        //     case 3:
-        //     case 5:
-        //     case 7:
-        //     case 8:
-        //     case 10:
-        //     case 12:
-        //         month = 30;
-        // }
+    const makeDay = (month) => {
+        const array = [];
+        let date = 0;
+        switch (Number(month)) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                date = 31;
+                break;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                date = 30;
+                break;
+            case 2:
+                date = 29;
+                break;
+            default:
+                break;
+        }
+        for (let i = 1; i <= date; i += 1) {
+            array.push(i);
+        }
+        return array;
     };
 
+    // 10 자이상 영문+숫자+특수문자가 각각 하나 이상 들어가야함.
+    const validateId = /^(?=.*?[a-zA-Z0-9])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{10,}$/;
+
+    // 12 자이상 영문+숫자+특수문자가 각각 하나 이상 들어가야함.
+    const validatePassword = /^(?=.*?[a-zA-Z0-9])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}$/;
+
     const onChangeId = (e) => {
+        setIdChecked(false);
         setId(e.target.value);
+        setIdDuplicateError(!validateId.test(e.target.value));
     };
 
     const onChangePassword = (e) => {
         setPassword(e.target.value);
+        setPasswordValidateError(!validatePassword.test(e.target.value));
     };
 
     const onChangeCheckPassword = useCallback(
@@ -69,7 +102,37 @@ const Join = () => {
 
     const handleJoin = (e) => {
         e.preventDefault();
-        console.log({ id, password, checkPassword, gender, intro });
+        console.log({
+            id,
+            password,
+            checkPassword,
+            gender,
+            birthday,
+            hobby,
+            intro,
+        });
+
+        if (idChecked === false) {
+            alert("아이디 중복확인 체크를 해주세요.");
+            return;
+        }
+    };
+
+    const onChangeYear = (e) => {
+        setBirthday({ ...birthday, year: e.target.value });
+    };
+
+    const onChangeMonth = (e) => {
+        setBirthday({ ...birthday, month: e.target.value });
+        // makeDay(e.target.value);
+    };
+
+    const onChangeDay = (e) => {
+        setBirthday({ ...birthday, day: e.target.value });
+    };
+
+    const onChangeHobby = (e) => {
+        setHobby({ ...hobby, [e.target.value]: e.target.checked });
     };
 
     return (
@@ -84,7 +147,22 @@ const Join = () => {
                     value={id}
                     onChange={onChangeId}
                 />
-                <button type="button">중복체크</button>
+                <button
+                    type="button"
+                    onClick={() => {
+                        setIdChecked(true);
+                    }}
+                >
+                    중복체크
+                </button>
+                {idDuplicateError ? (
+                    <p style={{ color: "red" }}>
+                        ID는 10 자이상 영문+숫자+특수문자가 각각 하나 이상
+                        포함되어야 합니다.
+                    </p>
+                ) : (
+                    ""
+                )}
             </div>
             <div>
                 <label htmlFor="password">비밀번호</label>
@@ -96,6 +174,12 @@ const Join = () => {
                     onChange={onChangePassword}
                 />
             </div>
+            {passwordValidateError && (
+                <div style={{ color: "red" }}>
+                    패스워드는 12자 이상되어야 하고 숫자, 영문, 특수문자가 하나
+                    이상 포함되어야 합니다.
+                </div>
+            )}
             <div>
                 <label htmlFor="password2">비밀번호확인</label>
                 <input
@@ -141,8 +225,8 @@ const Join = () => {
             <div>
                 <p>생년월일</p>
                 <div className="inner">
-                    <select>
-                        <option value="" selected>
+                    <select value={birthday.year} onChange={onChangeYear}>
+                        <option value="" key="default">
                             선택하세요.
                         </option>
                         {makeYear(1910).map((year) => (
@@ -152,8 +236,8 @@ const Join = () => {
                         ))}
                     </select>{" "}
                     년
-                    <select onChange={makeDay}>
-                        <option value="" selected>
+                    <select value={birthday.month} onChange={onChangeMonth}>
+                        <option value=" " key="default">
                             선택하세요.
                         </option>
                         {makeMonth().map((month) => (
@@ -163,8 +247,17 @@ const Join = () => {
                         ))}
                     </select>{" "}
                     월
-                    <select>
-                        <option value="20">20</option>
+                    <select value={birthday.day} onChange={onChangeDay}>
+                        <option value="" key="default">
+                            선택하세요.
+                        </option>
+                        {birthday.month
+                            ? makeDay(birthday.month).map((day) => (
+                                  <option value={day} key={day}>
+                                      {day}
+                                  </option>
+                              ))
+                            : ""}
                     </select>
                     일
                 </div>
@@ -174,15 +267,30 @@ const Join = () => {
                 <div className="inner">
                     <label>
                         연애
-                        <input type="checkbox" value="연애" />
+                        <input
+                            type="checkbox"
+                            value="연애"
+                            checked={hobby.연애 === true}
+                            onChange={onChangeHobby}
+                        />
                     </label>
                     <label>
                         게임
-                        <input type="checkbox" value="게임" />
+                        <input
+                            type="checkbox"
+                            value="게임"
+                            checked={hobby.게임 === true}
+                            onChange={onChangeHobby}
+                        />
                     </label>
                     <label>
                         영화보기
-                        <input type="checkbox" value="영화보기" />
+                        <input
+                            type="checkbox"
+                            value="영화보기"
+                            checked={hobby.영화보기 === true}
+                            onChange={onChangeHobby}
+                        />
                     </label>
                 </div>
             </div>
