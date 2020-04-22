@@ -1,8 +1,13 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { Redirect } from "react-router-dom";
+
 import "./style.scss";
 import "./test";
 
-const Join = () => {
+const Join = ({ loggedIn, setLoggedIn }) => {
+    const getUserList = localStorage.getItem("userList")
+        ? JSON.parse(localStorage.getItem("userList"))
+        : [];
     const [id, setId] = useState("");
     const [idChecked, setIdChecked] = useState(false);
     const [idDuplicateError, setIdDuplicateError] = useState("");
@@ -22,6 +27,12 @@ const Join = () => {
         게임: false,
         영화보기: false,
     });
+    const [userList, setUserList] = useState(getUserList);
+    const [joinComplete, setJoinComplete] = useState(false);
+
+    useEffect(() => {
+        localStorage.setItem("userList", JSON.stringify(userList));
+    }, [userList]);
 
     const makeYear = (startYear) => {
         const array = [];
@@ -88,6 +99,12 @@ const Join = () => {
         setPasswordValidateError(!validatePassword.test(e.target.value));
     };
 
+    const onClickIdCheck = (id) => {
+        const userFound = userList.filter((list) => list.id === id).length;
+        console.log(userFound);
+        userFound ? alert("중복되는 아이디입니다.") : setIdChecked(true);
+    };
+
     const onChangeCheckPassword = useCallback(
         (e) => {
             setPasswordError(e.target.value !== password);
@@ -102,7 +119,8 @@ const Join = () => {
 
     const handleJoin = (e) => {
         e.preventDefault();
-        console.log({
+
+        const user = {
             id,
             password,
             checkPassword,
@@ -110,12 +128,32 @@ const Join = () => {
             birthday,
             hobby,
             intro,
-        });
-
-        if (idChecked === false) {
+        };
+        if (!idChecked) {
             alert("아이디 중복확인 체크를 해주세요.");
             return;
         }
+        if (idDuplicateError) {
+            alert(
+                "ID는 10 자이상 영문+숫자+특수문자가 각각 하나 이상 포함되어야 합니다."
+            );
+            return;
+        }
+        if (passwordError) {
+            alert("패스워드가 맞지 않습니다.");
+            return;
+        }
+        if (passwordValidateError) {
+            alert(
+                "패스워드는 12자 이상되어야 하고 숫자, 영문, 특수문자가 하나 이상 포함되어야 합니다."
+            );
+            return;
+        }
+
+        alert("회원가입이 완료되었습니다.\nTodoList 페이지로 이동합니다.");
+        setUserList(userList.concat(user));
+        setJoinComplete(true);
+        setLoggedIn(true);
     };
 
     const onChangeYear = (e) => {
@@ -146,24 +184,24 @@ const Join = () => {
                     name="id"
                     value={id}
                     onChange={onChangeId}
+                    required
                 />
                 <button
                     type="button"
                     onClick={() => {
-                        setIdChecked(true);
+                        onClickIdCheck(id);
                     }}
                 >
                     중복체크
                 </button>
-                {idDuplicateError ? (
-                    <p style={{ color: "red" }}>
-                        ID는 10 자이상 영문+숫자+특수문자가 각각 하나 이상
-                        포함되어야 합니다.
-                    </p>
-                ) : (
-                    ""
-                )}
+                {idChecked && <p style={{ color: "green" }}>가입가능</p>}
             </div>
+            {idDuplicateError && (
+                <p style={{ color: "red" }}>
+                    ID는 10 자이상 영문+숫자+특수문자가 각각 하나 이상
+                    포함되어야 합니다.
+                </p>
+            )}
             <div>
                 <label htmlFor="password">비밀번호</label>
                 <input
@@ -172,6 +210,7 @@ const Join = () => {
                     name="password"
                     value={password}
                     onChange={onChangePassword}
+                    required
                 />
             </div>
             {passwordValidateError && (
@@ -188,6 +227,7 @@ const Join = () => {
                     name="password2"
                     value={checkPassword}
                     onChange={onChangeCheckPassword}
+                    required
                 />
             </div>
             {passwordError && (
@@ -306,6 +346,7 @@ const Join = () => {
                 <button>취소</button>
                 <button type="submit">가입완료</button>
             </div>
+            {joinComplete && <Redirect to="/" />}
         </form>
     );
 };
