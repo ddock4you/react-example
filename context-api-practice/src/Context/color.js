@@ -20,11 +20,13 @@ const ColorProvider = ({ children }) => {
         actions: { setColor, setSubcolor },
     };
     return (
+        // Provider: Context의 value를 변경할 수 있음.
         <ColorContext.Provider value={value}>{children}</ColorContext.Provider>
     );
 };
 
 // const ColorConsumer = ColorContext.Consumer와 같은 의미
+// Consumer: Context를 조회
 const { Consumer: ColorConsumer } = ColorContext;
 
 // ColorProvider와 Colorconsumer 내보내기
