@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { Store } from "../context";
 
-const Header = ({ loggedIn, setLoggedIn }) => {
+const Header = () => {
+    const { state, setState } = useContext(Store);
+
     return (
         <nav>
+            {state.isLogin && `환영합니다. ${state.isLogin.id} 님`}
             <ul>
                 <li>
                     <Link to="/">홈</Link>
                 </li>
-                {loggedIn ? (
-                    <li onClick={() => setLoggedIn(false)}>로그아웃</li>
+                {state.isLogin ? (
+                    <li onClick={() => setState.setIsLogin(false)}>로그아웃</li>
                 ) : (
                     <>
                         <li>

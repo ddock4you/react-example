@@ -1,16 +1,18 @@
-import React, { createContext, useState } from "react";
+import React, { useState, createContext } from "react";
 
 const Store = createContext();
 
+export default Store;
+
 const StoreProvider = ({ children }) => {
-    const [testNum, setTestNum] = useState(100);
+    const [isLogin, setIsLogin] = useState(null);
 
     const value = {
-        state: { testNum },
-        setState: { setTestNum },
+        state: { isLogin },
+        setState: { setIsLogin },
     };
 
     return <Store.Provider value={value}>{children}</Store.Provider>;
 };
 
-export default StoreProvider;
+export { Store, StoreProvider };

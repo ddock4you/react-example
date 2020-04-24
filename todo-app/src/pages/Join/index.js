@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
 import "./style.scss";
-import "./test";
+import Store from "../../context";
 
 const Join = ({ loggedIn, setLoggedIn }) => {
     const getUserList = localStorage.getItem("userList")
@@ -29,6 +29,8 @@ const Join = ({ loggedIn, setLoggedIn }) => {
     });
     const [userList, setUserList] = useState(getUserList);
     const [joinComplete, setJoinComplete] = useState(false);
+
+    const { state, setState } = useContext(Store);
 
     useEffect(() => {
         localStorage.setItem("userList", JSON.stringify(userList));
@@ -117,6 +119,22 @@ const Join = ({ loggedIn, setLoggedIn }) => {
         setintro(e.target.value);
     };
 
+    const onChangeYear = (e) => {
+        setBirthday({ ...birthday, year: e.target.value });
+    };
+
+    const onChangeMonth = (e) => {
+        setBirthday({ ...birthday, month: e.target.value });
+    };
+
+    const onChangeDay = (e) => {
+        setBirthday({ ...birthday, day: e.target.value });
+    };
+
+    const onChangeHobby = (e) => {
+        setHobby({ ...hobby, [e.target.value]: e.target.checked });
+    };
+
     const handleJoin = (e) => {
         e.preventDefault();
 
@@ -152,25 +170,7 @@ const Join = ({ loggedIn, setLoggedIn }) => {
 
         alert("회원가입이 완료되었습니다.\nTodoList 페이지로 이동합니다.");
         setUserList(userList.concat(user));
-        setJoinComplete(true);
-        setLoggedIn(true);
-    };
-
-    const onChangeYear = (e) => {
-        setBirthday({ ...birthday, year: e.target.value });
-    };
-
-    const onChangeMonth = (e) => {
-        setBirthday({ ...birthday, month: e.target.value });
-        // makeDay(e.target.value);
-    };
-
-    const onChangeDay = (e) => {
-        setBirthday({ ...birthday, day: e.target.value });
-    };
-
-    const onChangeHobby = (e) => {
-        setHobby({ ...hobby, [e.target.value]: e.target.checked });
+        setState.setIsLogin(id);
     };
 
     return (
@@ -346,7 +346,7 @@ const Join = ({ loggedIn, setLoggedIn }) => {
                 <button>취소</button>
                 <button type="submit">가입완료</button>
             </div>
-            {joinComplete && <Redirect to="/" />}
+            {state.isLogin && <Redirect to="/" />}
         </form>
     );
 };

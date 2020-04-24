@@ -5,11 +5,11 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
-import StoreProvider from "./context/index";
+import { StoreProvider } from "./context";
 
 const App = () => {
     const [loggedIn, setLoggedIn] = useState(false);
-    console.log(loggedIn);
+
     return (
         <StoreProvider>
             <BrowserRouter>

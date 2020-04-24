@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
 import "./style.scss";
+import Store from "../../context/index";
 
-const Login = ({ loggedin, setLoggedIn }) => {
+const Login = () => {
     const userList = localStorage.getItem("userList")
         ? JSON.parse(localStorage.getItem("userList"))
         : [];
     const [id, inputId] = useState("");
     const [password, inputPassword] = useState("");
     const [loginSuccess, setLoginSuccess] = useState(false);
+
+    const { setState } = useContext(Store);
 
     const onLogin = (e) => {
         e.preventDefault();
@@ -34,7 +37,7 @@ const Login = ({ loggedin, setLoggedIn }) => {
             return;
         }
         setLoginSuccess(true);
-        setLoggedIn(true);
+        setState.setIsLogin({ id });
     };
 
     const onChangeId = (e) => {
@@ -64,6 +67,7 @@ const Login = ({ loggedin, setLoggedIn }) => {
             <div className="btn-group">
                 <button type="submit">로그인</button>
             </div>
+            {/* <div>{value.state.testNum}</div> */}
             {loginSuccess && <Redirect to="/" />}
         </form>
     );
