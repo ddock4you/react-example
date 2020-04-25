@@ -28,7 +28,6 @@ const Join = ({ loggedIn, setLoggedIn }) => {
         영화보기: false,
     });
     const [userList, setUserList] = useState(getUserList);
-    const [joinComplete, setJoinComplete] = useState(false);
 
     const { state, setState } = useContext(Store);
 
