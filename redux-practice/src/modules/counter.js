@@ -14,7 +14,7 @@ const counter = (state = initialState, action) => {
             return {
                 number: state.number + 1,
             };
-        case DECRESE:
+        case DECREASE:
             return {
                 number: state.number - 1,
             };
