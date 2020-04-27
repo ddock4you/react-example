@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
 import "./style.scss";
-import Store from "../../context";
+import { Store } from "../../context";
 
 const Join = ({ loggedIn, setLoggedIn }) => {
     const getUserList = localStorage.getItem("userList")

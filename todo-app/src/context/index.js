@@ -2,8 +2,6 @@ import React, { useState, createContext } from "react";
 
 const Store = createContext();
 
-export default Store;
-
 const StoreProvider = ({ children }) => {
     const [isLogin, setIsLogin] = useState(null);
 

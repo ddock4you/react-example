@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
 import "./style.scss";
-import Store from "../../context/index";
+import { Store } from "../../context/index";
 
 const Login = () => {
     const userList = localStorage.getItem("userList")

@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback, useContext } from "react";
 import TodoTemplate from "./TodoTemplate";
 import TodoInsert from "./TodoInsert";
 import TodoList from "./TodoList";
-import Store from "../../context";
+import { Store } from "../../context";
 
 function createBulkTodos() {
     const array = [];
