@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { changeInput, insert, toggle, remove } from "../modules/todos";
 import Todos from "../components/Todos";
 import useAction from "../lib/useAction";
